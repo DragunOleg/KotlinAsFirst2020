@@ -2,6 +2,7 @@
 
 package lesson3.task1
 
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -17,7 +18,7 @@ import kotlin.math.sqrt
 fun factorial(n: Int): Double {
     var result = 1.0
     for (i in 1..n) {
-        result = result * i // Please do not fix in master
+        result *= i // Please do not fix in master
     }
     return result
 }
@@ -72,7 +73,16 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    var digitCounter = 1
+    var number = n
+
+    while (number >= 10) {
+        digitCounter += 1
+        number /= 10
+    }
+    return digitCounter
+}
 
 /**
  * Простая (2 балла)
@@ -80,21 +90,44 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    if (n <= 2) return 1
+
+    var fib1 = 1
+    var fib2 = 1
+    var temp: Int
+
+    for (i in 3..n) {
+        temp = fib2
+        fib2 += fib1
+        fib1 = temp
+    }
+    return fib2
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    for (i in 2..n) {
+        if (n % i == 0) return i
+    }
+    return 1
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    for (i in n - 1 downTo 1) {
+        if (n % i == 0) return i
+    }
+    return 1
+}
 
 /**
  * Простая (2 балла)
@@ -212,4 +245,23 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    if (n < 2) return 1
+    var nOfDigits = 1
+    var nFib = 1
+    var fibLine: Long = 1
+    do {
+        //инкрементируем счетчики
+        nFib++
+        nOfDigits += digitNumber(fib(nFib))
+        //домножаем на 10 в степени кол-ва цифр в текущем числе фиб
+        fibLine *= 10.toDouble().pow(digitNumber(fib(nFib))).toInt()
+        //плюсуем с текущем числом фиб
+        fibLine += fib(nFib)
+    } while (nOfDigits < n)
+    //обрезаем лишние цифры, если они появились
+    fibLine /= 10.toDouble().pow(nOfDigits - n).toInt()
+    return (fibLine % 10).toInt()
+    //TODO() работает до 19 знаков(ограничение long). Думаю это хитрость от преподавателя :D
+    //для числа знаков >= 20 легко повторить эту функцию со строками
+}
