@@ -241,6 +241,8 @@ class Tests {
     @Test
     @Tag("5")
     fun fibSequenceDigit() {
+        println(Int.MAX_VALUE.toString())
+        println(Long.MAX_VALUE.toString())
         assertEquals(1, fibSequenceDigit(1))
         assertEquals(1, fibSequenceDigit(2))
         assertEquals(3, fibSequenceDigit(4))

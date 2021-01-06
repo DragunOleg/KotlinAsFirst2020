@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.digitNumber
 import kotlin.math.sqrt
 
 // Урок 4: списки
@@ -127,7 +128,10 @@ fun abs(v: List<Double>): Double = TODO()
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double {
+    if (list.isEmpty()) return 0.0
+    return list.sum() / list.size
+}
 
 /**
  * Средняя (3 балла)
@@ -137,7 +141,16 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    return if (list.isEmpty()) list
+    else {
+        val mean = mean(list)
+        for (i in list.indices) {
+            list[i] -= mean
+        }
+        list
+    }
+}
 
 /**
  * Средняя (3 балла)
@@ -168,7 +181,16 @@ fun polynom(p: List<Int>, x: Int): Int = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
+fun accumulate(list: MutableList<Int>): MutableList<Int> {
+    return if (list.isEmpty() || list.size == 1) list
+    else {
+        for (i in list.indices) {
+            if (i > 0) list[i] += list[i - 1]
+        }
+        list
+    }
+}
+
 
 /**
  * Средняя (3 балла)
@@ -250,4 +272,150 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val digitNumber = digitNumber(n)    //цифр в числе
+    var digitsToStrList = mutableListOf<String>()   //изменяемый список строк, частично формирующий итоговое число
+    val units =
+        (n.toString()[digitNumber - 1]).toInt() - '0'.toInt()   //-'0'.toInt() subtracts the ASCII code of 0 from each digit. Иначе передается неверный инт
+
+    addUnitsToList(units, digitsToStrList) //добавляем единицы к листу
+
+    if (n >= 10) {
+        val tens = n.toString()[digitNumber - 2].toInt() - '0'.toInt()
+        addTensToList(units, tens, digitsToStrList)
+
+        if (n >= 100) {
+            val hundreds = n.toString()[digitNumber - 3].toInt() - '0'.toInt()
+            addHundredsToList(hundreds, digitsToStrList)
+
+            if (n >= 1000) {
+                val thousands = n.toString()[digitNumber - 4].toInt() - '0'.toInt()
+                addThousandsToList(thousands, digitsToStrList)
+
+                if (n >= 10000) {
+                    val tensOfThousands = n.toString()[digitNumber - 5].toInt() - '0'.toInt()
+                    addTensOfThousandsToList(thousands, tensOfThousands, digitsToStrList)
+
+                    if (n >= 100000) {
+                        val hundredsOfThousands = n.toString()[digitNumber - 6].toInt() - '0'.toInt()
+                        addHundredsToList(hundredsOfThousands, digitsToStrList)
+                    }
+                }
+            }
+        }
+    }
+    while (digitsToStrList.any { it == "" }) {
+        digitsToStrList.remove("")
+    }
+    return digitsToStrList.joinToString(separator = " ")
+}
+
+private fun addUnitsToList(units: Int, list: MutableList<String>): MutableList<String> {
+    when (units) {
+        0 -> list.add(0, "")
+        1 -> list.add(0, "один")
+        2 -> list.add(0, "два")
+        3 -> list.add(0, "три")
+        4 -> list.add(0, "четыре")
+        5 -> list.add(0, "пять")
+        6 -> list.add(0, "шесть")
+        7 -> list.add(0, "семь")
+        8 -> list.add(0, "восемь")
+        9 -> list.add(0, "девять")
+    }
+    return list
+}
+
+private fun addTensToList(units: Int, tens: Int, list: MutableList<String>): MutableList<String> {
+    when (tens) {
+        0 -> list.add(0, "")
+        1 -> {
+            when (units) {      //заменяем единицы для уникального десятка
+                0 -> list[0] = "десять"
+                1 -> list[0] = "одиннадцать"
+                2 -> list[0] = "двенадцать"
+                3 -> list[0] = "тринадцать"
+                4 -> list[0] = "четырнадцать"
+                5 -> list[0] = "пятнадцать"
+                6 -> list[0] = "шестнадцать"
+                7 -> list[0] = "семнадцать"
+                8 -> list[0] = "восемнадцать"
+                9 -> list[0] = "девятнадцать"
+            }
+        }
+        2 -> list.add(0, "двадцать")
+        3 -> list.add(0, "тридцать")
+        4 -> list.add(0, "сорок")
+        5 -> list.add(0, "пятьдесят")
+        6 -> list.add(0, "шестьдесят")
+        7 -> list.add(0, "семьдесят")
+        8 -> list.add(0, "восемьдесят")
+        9 -> list.add(0, "девяносто")
+    }
+    return list
+}
+
+private fun addHundredsToList(hundreds: Int, list: MutableList<String>): MutableList<String> {
+    when (hundreds) {
+        0 -> list.add(0, "")
+        1 -> list.add(0, "сто")
+        2 -> list.add(0, "двести")
+        3 -> list.add(0, "триста")
+        4 -> list.add(0, "четыреста")
+        5 -> list.add(0, "пятьсот")
+        6 -> list.add(0, "шестьсот")
+        7 -> list.add(0, "семьсот")
+        8 -> list.add(0, "восемьсот")
+        9 -> list.add(0, "девятьсот")
+    }
+    return list
+}
+
+private fun addThousandsToList(thousands: Int, list: MutableList<String>): MutableList<String> {
+    when (thousands) {
+        0 -> list.add(0, "тысяч")
+        1 -> list.add(0, "одна тысяча")
+        2 -> list.add(0, "две тысячи")
+        3 -> list.add(0, "три тысячи")
+        4 -> list.add(0, "четыре тысячи")
+        5 -> list.add(0, "пять тысяч")
+        6 -> list.add(0, "шесть тысяч")
+        7 -> list.add(0, "семь тысяч")
+        8 -> list.add(0, "восемь тысяч")
+        9 -> list.add(0, "девять тысяч")
+    }
+    return list
+}
+
+private fun addTensOfThousandsToList(
+    thousands: Int,
+    tensOfThousands: Int,
+    list: MutableList<String>
+): MutableList<String> {
+    when (tensOfThousands) {
+        0 -> list.add(0, "")
+        1 -> {
+            when (thousands) {
+                0 -> list[0] = "десять"
+                1 -> list[0] = "одиннадцать тысяч"
+                2 -> list[0] = "двенадцать тысяч"
+                3 -> list[0] = "тринадцать тысяч"
+                4 -> list[0] = "четырнадцать тысяч"
+                5 -> list[0] = "пятнадцать тысяч"
+                6 -> list[0] = "шестнадцать тысяч"
+                7 -> list[0] = "семнадцать тысяч"
+                8 -> list[0] = "восемнадцать тысяч"
+                9 -> list[0] = "девятнадцать тысяч"
+            }
+        }
+        2 -> list.add(0, "двадцать")
+        3 -> list.add(0, "тридцать")
+        4 -> list.add(0, "сорок")
+        5 -> list.add(0, "пятьдесят")
+        6 -> list.add(0, "шестьдесят")
+        7 -> list.add(0, "семьдесят")
+        8 -> list.add(0, "восемьдесят")
+        9 -> list.add(0, "девяносто")
+    }
+    return list
+}
