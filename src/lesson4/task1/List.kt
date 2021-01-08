@@ -274,7 +274,7 @@ fun roman(n: Int): String = TODO()
  */
 fun russian(n: Int): String {
     val digitNumber = digitNumber(n)    //цифр в числе
-    var digitsToStrList = mutableListOf<String>()   //изменяемый список строк, частично формирующий итоговое число
+    val digitsToStrList = mutableListOf<String>()   //изменяемый список строк, частично формирующий итоговое число
     val units =
         (n.toString()[digitNumber - 1]).toInt() - '0'.toInt()   //-'0'.toInt() subtracts the ASCII code of 0 from each digit. Иначе передается неверный инт
 
@@ -326,7 +326,7 @@ private fun addUnitsToList(units: Int, list: MutableList<String>): MutableList<S
     return list
 }
 
-private fun addTensToList(units: Int, tens: Int, list: MutableList<String>): MutableList<String> {
+private fun addTensToList(units: Int, tens: Int, list: MutableList<String>) /*MutableList<String>*/ {
     when (tens) {
         0 -> list.add(0, "")
         1 -> {
@@ -352,7 +352,7 @@ private fun addTensToList(units: Int, tens: Int, list: MutableList<String>): Mut
         8 -> list.add(0, "восемьдесят")
         9 -> list.add(0, "девяносто")
     }
-    return list
+    //return list
 }
 
 private fun addHundredsToList(hundreds: Int, list: MutableList<String>): MutableList<String> {
