@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.NumberFormatException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +76,70 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val wordsList = str.split(" ")
+    if (wordsList.size != 3) return ""
+    try {
+        val year = wordsList[2].toInt()
+        val day = wordsList[0].toInt()
+        val month = when (wordsList[1]) {
+            "января" -> {
+                if (day in 0..31) 1
+                else return ""
+            }
+            "февраля" -> {
+                if (day == 29 && ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0))) 2
+                else if (day in 0..28) 2
+                else return ""
+            }
+            "марта" -> {
+                if (day in 0..31) 3
+                else return ""
+            }
+            "апреля" -> {
+                if (day in 0..30) 4
+                else return ""
+            }
+            "мая" -> {
+                if (day in 0..31) 5
+                else return ""
+            }
+            "июня" -> {
+                if (day in 0..30) 6
+                else return ""
+            }
+            "июля" -> {
+                if (day in 0..31) 7
+                else return ""
+            }
+            "августа" -> {
+                if (day in 0..31) 8
+                else return ""
+            }
+            "сентября" -> {
+                if (day in 0..30) 9
+                else return ""
+            }
+            "октября" -> {
+                if (day in 0..31) 10
+                else return ""
+            }
+            "ноября" -> {
+                if (day in 0..30) 11
+                else return ""
+            }
+            "декабря" -> {
+                if (day in 0..31) 12
+                else return ""
+            }
+            else -> return ""
+        }
+        return String.format("%02d.%02d.%04d", day, month, year)
+
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+}
 
 /**
  * Средняя (4 балла)
@@ -149,7 +214,21 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val lowStr = str.toLowerCase()
+    val words = lowStr.split(" ")
+    if (words.size < 2) return -1
+    for (i in 0..words.lastIndex - 1) {
+        if (words[i] == words[i + 1]) {
+            var charCounter = i //Кол-во пробелов перед совпадением
+            for (j in 0 until i) {
+                charCounter += words[j].length
+            }
+            return charCounter
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -162,7 +241,25 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val pairsString = description.split("; ")
+    if (pairsString.isEmpty()) return ""
+    try {
+        val pairs = mutableMapOf<String, Double>()
+        pairsString.forEach {
+            val currentPair = it.split(" ")
+            if (currentPair.size != 2) return ""
+            pairs[currentPair[0]] = currentPair[1].toDouble()
+        }
+        var result = Pair<String, Double>("", 0.0)
+        pairs.forEach {
+            if (it.value >= result.second) result = it.toPair()
+        }
+        return result.first
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+}
 
 /**
  * Сложная (6 баллов)
