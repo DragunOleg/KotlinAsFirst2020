@@ -162,9 +162,16 @@ class Tests {
     @Test
     @Tag("3")
     fun factorize() {
+        fun heavyTest() {
+            assertEquals(listOf(937, 967, 991), factorize(897924289))
+            assertEquals(listOf(2, 2, 5, 9973, 9973), factorize(1989214580))
+            assertEquals(listOf(46301, 46301), factorize(2143782601))
+        }
         assertEquals(listOf(2), factorize(2))
         assertEquals(listOf(3, 5, 5), factorize(75))
         assertEquals(listOf(2, 3, 3, 19), factorize(342))
+        assertEquals(listOf(2, 7, 7, 7, 11, 11), factorize(83006))
+        for (i in 1..100000) heavyTest()
     }
 
     @Test
