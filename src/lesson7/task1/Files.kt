@@ -93,13 +93,16 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val map = mutableMapOf<String, Int>()
     for (string in substrings) {
         map[string] = 0
+        //не работает на строку длинношеее и сабстринг ее. считает 1 раз вместо 2
+        /*  val regular = Regex(string.toLowerCase())
+        val result = regular.findAll(file, 0).toList()
+        if (result.isNotEmpty()) map[string] = result.size*/
         for (i in file.indices) {
             if (string[0].toLowerCase() == file[i]) {
                 for (j in string.indices) {
                     if (string[j].toLowerCase() != file[i + j]) break
                     if (j == string.length - 1) {
                         map[string] = map[string]!!.plus(1)
-
                     }
                 }
             }

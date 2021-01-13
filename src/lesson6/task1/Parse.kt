@@ -84,52 +84,52 @@ fun dateStrToDigit(str: String): String {
         val day = wordsList[0].toInt()
         val month = when (wordsList[1]) {
             "января" -> {
-                if (day in 0..31) 1
+                if (day in 1..31) 1
                 else return ""
             }
             "февраля" -> {
                 if (day == 29 && ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0))) 2
-                else if (day in 0..28) 2
+                else if (day in 1..28) 2
                 else return ""
             }
             "марта" -> {
-                if (day in 0..31) 3
+                if (day in 1..31) 3
                 else return ""
             }
             "апреля" -> {
-                if (day in 0..30) 4
+                if (day in 1..30) 4
                 else return ""
             }
             "мая" -> {
-                if (day in 0..31) 5
+                if (day in 1..31) 5
                 else return ""
             }
             "июня" -> {
-                if (day in 0..30) 6
+                if (day in 1..30) 6
                 else return ""
             }
             "июля" -> {
-                if (day in 0..31) 7
+                if (day in 1..31) 7
                 else return ""
             }
             "августа" -> {
-                if (day in 0..31) 8
+                if (day in 1..31) 8
                 else return ""
             }
             "сентября" -> {
-                if (day in 0..30) 9
+                if (day in 1..30) 9
                 else return ""
             }
             "октября" -> {
-                if (day in 0..31) 10
+                if (day in 1..31) 10
                 else return ""
             }
             "ноября" -> {
-                if (day in 0..30) 11
+                if (day in 1..30) 11
                 else return ""
             }
             "декабря" -> {
-                if (day in 0..31) 12
+                if (day in 1..31) 12
                 else return ""
             }
             else -> return ""
