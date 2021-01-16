@@ -11,6 +11,7 @@ class Tests {
         val matrix = createMatrix(4, 6, 0.0)
         assertEquals(4, matrix.height)
         assertEquals(6, matrix.width)
+        println(matrix.toString())
     }
 
     @Test
@@ -29,6 +30,7 @@ class Tests {
                 assertEquals(value++, matrix[Cell(row, column)])
             }
         }
+        println(matrix.toString())
     }
 
     @Test
@@ -48,5 +50,6 @@ class Tests {
                 assertEquals(strings[index++], matrix[row, column])
             }
         }
+        println(matrix.toString())
     }
 }
