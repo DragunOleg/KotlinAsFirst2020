@@ -4,6 +4,9 @@ package lesson9.task2
 
 import lesson9.task1.Matrix
 import lesson9.task1.createMatrix
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
+
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -104,7 +107,17 @@ fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
  * 4 5 6      8 5 2
  * 7 8 9      9 6 3
  */
-fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
+fun <E> rotate(matrix: Matrix<E>): Matrix<E> {
+    if (matrix.height != matrix.width) throw IllegalArgumentException()
+    val result = createMatrix(matrix.height, matrix.width, matrix[1, 1])
+    for (i in matrix.width - 1 downTo 0) {
+        for (j in 0 until matrix.height) {
+            result[j, i] = matrix[matrix.height - 1 - i, j]
+        }
+    }
+
+    return result
+}
 
 /**
  * Сложная (5 баллов)
@@ -119,7 +132,32 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.height != matrix.width) return false
+    val n = matrix.height
+    for (i in 0 until n) {
+        val numbersList = mutableListOf<Int>()  //лист чисел от 1 до N для каждой строки
+        for (j in 0 until n) {
+            numbersList.add(j + 1)
+        }
+        for (j in 0 until n) {
+            if (numbersList.contains(matrix[i, j])) numbersList.remove(matrix[i, j])
+            else return false
+        }
+    }
+    for (i in 0 until n) {
+        val numbersList = mutableListOf<Int>()  //лист чисел от 1 до N для каждого столбца
+        for (j in 0 until n) {
+            numbersList.add(j + 1)
+        }
+        for (j in 0 until n) {
+            if (numbersList.contains(matrix[j, i])) numbersList.remove(matrix[j, i])
+            else return false
+        }
+    }
+
+    return true
+}
 
 /**
  * Средняя (3 балла)
@@ -184,7 +222,15 @@ fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> = TODO()
  * Инвертировать заданную матрицу.
  * При инвертировании знак каждого элемента матрицы следует заменить на обратный
  */
-operator fun Matrix<Int>.unaryMinus(): Matrix<Int> = TODO(this.toString())
+operator fun Matrix<Int>.unaryMinus(): Matrix<Int> {
+    val result = createMatrix(this.height, this.width, 0)
+    for (i in 0 until this.height) {
+        for (j in 0 until this.width) {
+            result[i, j] = -this[i, j]
+        }
+    }
+    return result
+}
 
 /**
  * Средняя (4 балла)
@@ -216,7 +262,21 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = TODO(this.toSt
  * Вернуть тройку (Triple) -- (да/нет, требуемый сдвиг по высоте, требуемый сдвиг по ширине).
  * Если наложение невозможно, то первый элемент тройки "нет" и сдвиги могут быть любыми.
  */
-fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> = TODO()
+fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> {
+    for (lockI in 0..lock.width - key.width) {
+        for (lockJ in 0..lock.height - key.height) {
+            var keyCounter = 0
+            for (keyI in 0 until key.width) {
+                for (keyJ in 0 until key.height) {
+                    if (lock[lockI + keyI, lockJ + keyJ] != key[keyI, keyJ]) keyCounter++
+                }
+            }
+            if (keyCounter == key.height * key.width) return Triple(true, lockI, lockJ)
+        }
+    }
+    return Triple(false, 0, 0)
+}
+
 
 /**
  * Сложная (8 баллов)
@@ -245,7 +305,33 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
  * 0  4 13  6
  * 3 10 11  8
  */
-fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO()
+fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    if (moves.isEmpty()) return matrix
+    if (matrix.height != 4 || matrix.width != 4 || moves.any { it !in 0..15 }) throw IllegalStateException()
+
+    moves.forEach {
+        var oneMove = true
+        for (i in 0..3) {
+            for (j in 0..3) {
+                if (it == matrix[i, j] && oneMove) {
+                    if (matrix[i - 1, j] == 0 || matrix[i + 1, j] == 0 || matrix[i, j - 1] == 0 || matrix[i, j + 1] == 0) {
+                        for (ii in 0..3) {
+                            for (jj in 0..3) {
+                                if (matrix[ii, jj] == 0 && oneMove) {
+                                    matrix[ii, jj] = it
+                                    matrix[i, j] = 0
+                                    oneMove = false
+                                }
+                            }
+                        }
+                    } else throw IllegalStateException()
+                }
+            }
+        }
+    }
+    return matrix
+
+}
 
 /**
  * Очень сложная (32 балла)
@@ -286,4 +372,118 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO(
  *
  * Перед решением этой задачи НЕОБХОДИМО решить предыдущую
  */
-fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> = TODO()
+fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
+    val targetMatrixOne = createMatrixFromLists(
+        4, 4, listOf(
+            listOf(1, 2, 3, 4), listOf(5, 6, 7, 8),
+            listOf(9, 10, 11, 12), listOf(13, 14, 15, 0)
+        )
+    )
+    val targetMatrixTwo = createMatrixFromLists(
+        4, 4, listOf(
+            listOf(1, 2, 3, 4), listOf(5, 6, 7, 8),
+            listOf(9, 10, 11, 12), listOf(13, 15, 14, 0)
+        )
+    )
+    val targetGraphOne = matrixToGraph(targetMatrixOne)
+    val targetGraphTwo = matrixToGraph(targetMatrixTwo)
+    val startGraph = matrixToGraph(matrix)
+    val paths = mutableSetOf<List<Graph.Cell>>()
+    val steps = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
+    dfs(startGraph, targetGraphOne, targetGraphTwo, paths, steps, result)
+    return steps
+}
+
+fun dfs(
+    start: Graph,
+    targetOne: Graph,
+    targetTwo: Graph,
+    visitedFields: MutableSet<List<Graph.Cell>>,
+    steps: MutableList<Int>,
+    result: MutableList<Int>
+) {
+    if (start == targetOne || start == targetTwo) {
+        result.addAll(steps.toList())
+        return
+    }
+    if (visitedFields.contains(start.field.toList())) { //проверяем, были ли мы на аналогичном поле
+        //val indexInPast = visitedFields.indexOf(start.field.toList())
+        steps.removeLast()                           //да= ремуваем шаг, который сюда привел и выпрыгиваем из текущей рекурсии
+    } else {                                            //если нет, продолжаем рекунсию
+        visitedFields.add(start.field.toList())         //добавляем текущее поле в посещенное
+        start.field[0].neighbors.forEach {              //перебираем соседей нуля, чтобы поменяться значениями с каждым соседом
+            steps.add(it.value)                         //какой шаг мы делаем, чтобы вызвать следующую dfs
+            val newStart = start.copy()
+            newStart.changeValuesWithZero(it.value)
+            dfs(newStart, targetOne, targetTwo, visitedFields, steps, result)
+            //steps.removeLast()
+        }
+    }
+}
+
+
+fun matrixToGraph(matrix: Matrix<Int>): Graph {
+    val graph = Graph()
+    graph.fillFieldWithEmpty()
+    //add all the vertices
+    run {
+        graph.addCell(1, matrix[0, 0])
+        graph.addCell(2, matrix[0, 1])
+        graph.addCell(3, matrix[0, 2])
+        graph.addCell(4, matrix[0, 3])
+        graph.addCell(5, matrix[1, 0])
+        graph.addCell(6, matrix[1, 1])
+        graph.addCell(7, matrix[1, 2])
+        graph.addCell(8, matrix[1, 3])
+        graph.addCell(9, matrix[2, 0])
+        graph.addCell(10, matrix[2, 1])
+        graph.addCell(11, matrix[2, 2])
+        graph.addCell(12, matrix[2, 3])
+        graph.addCell(13, matrix[3, 0])
+        graph.addCell(14, matrix[3, 1])
+        graph.addCell(15, matrix[3, 2])
+        graph.addCell(16, matrix[3, 3])
+    }
+    //connect all the vertices
+    run {
+        graph.connect(matrix[0, 0], matrix[0, 1])
+        graph.connect(matrix[0, 0], matrix[1, 0])
+        graph.connect(matrix[0, 1], matrix[0, 2])
+        graph.connect(matrix[0, 1], matrix[1, 1])
+        graph.connect(matrix[0, 2], matrix[0, 3])
+        graph.connect(matrix[0, 2], matrix[1, 2])
+        graph.connect(matrix[0, 3], matrix[1, 3])
+        graph.connect(matrix[1, 0], matrix[1, 1])
+        graph.connect(matrix[1, 1], matrix[1, 2])
+        graph.connect(matrix[1, 2], matrix[1, 3])
+        graph.connect(matrix[1, 0], matrix[2, 0])
+        graph.connect(matrix[1, 1], matrix[2, 1])
+        graph.connect(matrix[1, 2], matrix[2, 2])
+        graph.connect(matrix[1, 3], matrix[2, 3])
+        graph.connect(matrix[2, 0], matrix[2, 1])
+        graph.connect(matrix[2, 1], matrix[2, 2])
+        graph.connect(matrix[2, 2], matrix[2, 3])
+        graph.connect(matrix[2, 0], matrix[3, 0])
+        graph.connect(matrix[2, 1], matrix[3, 1])
+        graph.connect(matrix[2, 2], matrix[3, 2])
+        graph.connect(matrix[2, 3], matrix[3, 3])
+        graph.connect(matrix[3, 0], matrix[3, 1])
+        graph.connect(matrix[3, 1], matrix[3, 2])
+        graph.connect(matrix[3, 2], matrix[3, 3])
+    }
+    return graph
+}
+
+private fun <E> createMatrixFromLists(height: Int, width: Int, values: List<List<E>>): Matrix<E> {
+    val matrix = createMatrix(height, width, values[0][0])
+    for (row in 0 until height) {
+        for (column in 0 until width) {
+            matrix[row, column] = values[row][column]
+        }
+    }
+    return matrix
+}
+
+
+
